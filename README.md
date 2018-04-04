@@ -7,7 +7,7 @@ A simple library for using PowerShell from Java.
 `PowerShell.open()` opens a new PowerShell session. You can execute a PowerShell command with `psSession.executeCommands(command)`. It will return the output of the command as a string:
 ```java
 try (PowerShell psSession = PowerShell.open()) {
-    System.out.println(psSession.executeCommands("Write-Host 'hello Java'"));
+    System.out.println(psSession.executeCommands("Write-Output 'hello Java'"));
 } catch (IOException | PowerShellExecutionException ex) {
     ex.printStackTrace();
 }
@@ -21,7 +21,7 @@ You can also execute multiple lines of commands at once:
 try (PowerShell psSession = PowerShell.open()) {
     System.out.println(psSession.executeCommands(
             "for ($i = 1; $i -le 5; $i++) {",
-            "    Write-Host $i",
+            "    Write-Output $i",
             "}"));
 } catch (IOException | PowerShellExecutionException ex) {
     ex.printStackTrace();
@@ -40,7 +40,7 @@ If your PowerShell code uses parameters that might contain illegal characters, y
 String param = "thi's won't bre;ak' the' code";
 
 try (PowerShell psSession = PowerShell.open()) {
-    System.out.println(psSession.executeCommands("Write-Host " + PowerShell.escapePowerShellString(param)));
+    System.out.println(psSession.executeCommands("Write-Output " + PowerShell.escapePowerShellString(param)));
 } catch (IOException | PowerShellExecutionException ex) {
     ex.printStackTrace();
 }
