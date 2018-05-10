@@ -21,8 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package tuupertunut.powershelllibjava;
+package com.github.tuupertunut.powershelllibjava;
 
+import com.github.tuupertunut.powershelllibjava.PowerShell;
+import com.github.tuupertunut.powershelllibjava.PowerShellExecutionException;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;

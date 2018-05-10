@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package tuupertunut.powershelllibjava;
+package com.github.tuupertunut.powershelllibjava;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
