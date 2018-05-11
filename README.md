@@ -70,3 +70,11 @@ You must have PowerShell installed on your machine.
 **OS:** Windows is the only currently supported OS. This library has not been tested on Linux, but it might work.
 
 **Java:** Java 8 or higher is required.
+
+## Maven Central
+
+[![https://mvnrepository.com/artifact/com.github.tuupertunut/powershell-lib-java](https://img.shields.io/maven-central/v/com.github.tuupertunut/powershell-lib-java.svg?style=for-the-badge)](https://mvnrepository.com/artifact/com.github.tuupertunut/powershell-lib-java)
+
+**groupId:** com.github.tuupertunut
+
+**artifactId:** powershell-lib-java
