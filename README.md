@@ -16,6 +16,8 @@ try (PowerShell psSession = PowerShell.open()) {
 hello Java
 ```
 
+---
+
 You can also execute multiple lines of commands at once:
 ```java
 try (PowerShell psSession = PowerShell.open()) {
@@ -35,7 +37,9 @@ try (PowerShell psSession = PowerShell.open()) {
 5
 ```
 
-If your PowerShell code uses parameters that might contain illegal characters, you can sanitize your input with `PowerShell.escapePowerShellString(parameter)`:
+---
+
+If your PowerShell code has parameters that are dynamically read from Java strings, they might contain characters that have special meaning in PowerShell (kind of like SQL injection). You can sanitize your input with `PowerShell.escapePowerShellString(parameter)`:
 ```java
 String param = "thi's won't bre;ak' the' code";
 
@@ -48,6 +52,8 @@ try (PowerShell psSession = PowerShell.open()) {
 ```
 thi's won't bre;ak' the' code
 ```
+
+---
 
 If there is an error on executing the command, a `PowerShellExecutionException` is thrown:
 ```java
