@@ -44,6 +44,10 @@ import java.util.concurrent.Executors;
  */
 public class PowerShell implements Closeable {
 
+    //Default PowerShell executable path
+    private static final String DEFAULT_WIN_EXECUTABLE = "powershell";
+    private static final String DEFAULT_LINUX_EXECUTABLE = "pwsh";
+
     /* This string marks the end of command output. It should be as unique as
      * possible. This library assumes that the string never occurs as a
      * substring in any powershell command output. If that happens, behavior is
@@ -59,23 +63,12 @@ public class PowerShell implements Closeable {
     private final PrintWriter commandInput;
 
     private boolean closed;
+    private String customExecutablePath;
 
-    private PowerShell() throws IOException {
+    private PowerShell(String customExecutablePath) throws IOException {
+        this.customExecutablePath = customExecutablePath;
 
-        /* cmd /c chcp 65001 : Set console codepage to UTF-8, so that input and
-         * output streams of the console will be interpreted as UTF-8.
-         *
-         * > NUL : Discard any output from the codepage change command.
-         *
-         * & powershell : If codepage change was successful, start powershell.
-         *
-         * -ExecutionPolicy Bypass : Disable any prompts about unsigned scripts,
-         * because there is no way to answer prompts.
-         *
-         * -NoExit : Keep the session open after executing the first command.
-         *
-         * -Command - : Read commands from standard input stream of the process. */
-        psSession = new ProcessBuilder("cmd", "/c", "chcp", "65001", ">", "NUL", "&", "powershell", "-ExecutionPolicy", "Bypass", "-NoExit", "-Command", "-").start();
+        psSession = init().start();
 
         commandOutput = new BufferedReader(new InputStreamReader(psSession.getInputStream(), StandardCharsets.UTF_8));
         commandErrorOutput = new BufferedReader(new InputStreamReader(psSession.getErrorStream(), StandardCharsets.UTF_8));
@@ -91,6 +84,46 @@ public class PowerShell implements Closeable {
         closed = false;
     }
 
+    private ProcessBuilder init() {
+        ProcessBuilder pb;
+        if (isWindows()) {
+
+            /* cmd /c chcp 65001 : Set console codepage to UTF-8, so that input and
+             * output streams of the console will be interpreted as UTF-8.
+             *
+             * > NUL : Discard any output from the codepage change command.
+             *
+             * & powershell : If codepage change was successful, start powershell.
+             *
+             * -ExecutionPolicy Bypass : Disable any prompts about unsigned scripts,
+             * because there is no way to answer prompts.
+             *
+             * -NoExit : Keep the session open after executing the first command.
+             *
+             * -Command - : Read commands from standard input stream of the process. */
+            pb = new ProcessBuilder("cmd", "/c", "chcp", "65001", ">", "NUL", "&", getExecutable(), "-ExecutionPolicy", "Bypass", "-NoExit", "-Command", "-");
+        } else {
+            pb =  new ProcessBuilder(getExecutable(), "-nologo", "-noexit", "-Command", "-");
+        }
+        return pb;
+    }
+
+    private String getExecutable() {
+        if (customExecutablePath != null) {
+            return customExecutablePath;
+        }
+        if (isWindows()) {
+            return DEFAULT_WIN_EXECUTABLE;
+        } else {
+            return DEFAULT_LINUX_EXECUTABLE;
+        }
+    }
+
+    private boolean isWindows() {
+        String os = System.getProperty("os.name").toLowerCase();
+        return os.contains("win");
+    }
+
     /**
      * Opens a new PowerShell session.
      *
@@ -98,7 +131,11 @@ public class PowerShell implements Closeable {
      * @throws IOException if an IOException occurred on process creation.
      */
     public static PowerShell open() throws IOException {
-        return new PowerShell();
+        return new PowerShell(null);
+    }
+
+    public static PowerShell open(String customExecutablePath) throws IOException {
+        return new PowerShell(customExecutablePath);
     }
 
     /**
