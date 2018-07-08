@@ -83,6 +83,8 @@ public class PowerShell implements Closeable {
     }
 
     private static ProcessBuilder createProcessBuilder(String psExecutable) {
+
+        /* Windows needs some extra configuration to understand UTF-8. */
         if (isWindows()) {
 
             /* cmd /c chcp 65001 : Set console codepage to UTF-8, so that input
@@ -90,7 +92,7 @@ public class PowerShell implements Closeable {
              *
              * > NUL : Discard any output from the codepage change command.
              *
-             * & powershell : If codepage change was successful, start
+             * & *psExecutable* : If codepage change was successful, start
              * powershell.
              *
              * -ExecutionPolicy Bypass : Disable any prompts about unsigned
@@ -103,7 +105,7 @@ public class PowerShell implements Closeable {
              * process. */
             return new ProcessBuilder("cmd", "/c", "chcp", "65001", ">", "NUL", "&", psExecutable, "-ExecutionPolicy", "Bypass", "-NoExit", "-Command", "-");
         } else {
-            return new ProcessBuilder(psExecutable, "-nologo", "-noexit", "-Command", "-");
+            return new ProcessBuilder(psExecutable, "-ExecutionPolicy", "Bypass", "-NoExit", "-Command", "-");
         }
     }
 
