@@ -120,9 +120,10 @@ public class PowerShell implements Closeable {
         }
     }
 
+    /* Apache commons says this is a valid way to detect Windows.
+     * https://github.com/apache/commons-lang/blob/LANG_3_7/src/main/java/org/apache/commons/lang3/SystemUtils.java */
     private static boolean isWindows() {
-        String os = System.getProperty("os.name").toLowerCase();
-        return os.contains("win");
+        return System.getProperty("os.name").startsWith("Windows");
     }
 
     /**
