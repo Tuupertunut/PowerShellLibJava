@@ -37,8 +37,9 @@ import java.util.concurrent.Executors;
 
 /**
  * PowerShell session that can be used to execute PowerShell commands. An
- * instance of this class can be created with {@link #open()}. Instances should
- * always be closed with {@link #close()} to free resources.
+ * instance of this class can be created with {@link #open()} or
+ * {@link #open(java.lang.String)}. Instances should always be closed with
+ * {@link #close()} to free resources.
  *
  * @author Tuupertunut
  */
@@ -53,8 +54,6 @@ public class PowerShell implements Closeable {
      * undefined. */
     private static final String END_OF_COMMAND = "end-of-command-8Nb77LFv";
 
-    private final String customExecutablePath;
-
     private final Process psSession;
     private final BufferedReader commandOutput;
     private final BufferedReader commandErrorOutput;
@@ -65,10 +64,9 @@ public class PowerShell implements Closeable {
 
     private boolean closed;
 
-    private PowerShell(String customExecutablePath) throws IOException {
-        this.customExecutablePath = customExecutablePath;
+    private PowerShell(String psExecutable) throws IOException {
 
-        psSession = createProcessBuilder().start();
+        psSession = createProcessBuilder(psExecutable).start();
 
         commandOutput = new BufferedReader(new InputStreamReader(psSession.getInputStream(), StandardCharsets.UTF_8));
         commandErrorOutput = new BufferedReader(new InputStreamReader(psSession.getErrorStream(), StandardCharsets.UTF_8));
@@ -84,7 +82,7 @@ public class PowerShell implements Closeable {
         closed = false;
     }
 
-    private ProcessBuilder createProcessBuilder() {
+    private static ProcessBuilder createProcessBuilder(String psExecutable) {
         if (isWindows()) {
 
             /* cmd /c chcp 65001 : Set console codepage to UTF-8, so that input
@@ -103,20 +101,9 @@ public class PowerShell implements Closeable {
              *
              * -Command - : Read commands from standard input stream of the
              * process. */
-            return new ProcessBuilder("cmd", "/c", "chcp", "65001", ">", "NUL", "&", getExecutable(), "-ExecutionPolicy", "Bypass", "-NoExit", "-Command", "-");
+            return new ProcessBuilder("cmd", "/c", "chcp", "65001", ">", "NUL", "&", psExecutable, "-ExecutionPolicy", "Bypass", "-NoExit", "-Command", "-");
         } else {
-            return new ProcessBuilder(getExecutable(), "-nologo", "-noexit", "-Command", "-");
-        }
-    }
-
-    private String getExecutable() {
-        if (customExecutablePath != null) {
-            return customExecutablePath;
-        }
-        if (isWindows()) {
-            return DEFAULT_WIN_EXECUTABLE;
-        } else {
-            return DEFAULT_CORE_EXECUTABLE;
+            return new ProcessBuilder(psExecutable, "-nologo", "-noexit", "-Command", "-");
         }
     }
 
@@ -126,18 +113,36 @@ public class PowerShell implements Closeable {
         return System.getProperty("os.name").startsWith("Windows");
     }
 
+    private static String getDefaultExecutable() {
+        if (isWindows()) {
+            return DEFAULT_WIN_EXECUTABLE;
+        } else {
+            return DEFAULT_CORE_EXECUTABLE;
+        }
+    }
+
     /**
-     * Opens a new PowerShell session.
+     * Opens a new PowerShell session with default executable. On Windows, the
+     * default executable is "powershell" from Windows PowerShell, and on other
+     * platforms it is "pwsh" from PowerShell Core.
      *
      * @return a new PowerShell session.
      * @throws IOException if an IOException occurred on process creation.
      */
     public static PowerShell open() throws IOException {
-        return new PowerShell(null);
+        return new PowerShell(getDefaultExecutable());
     }
 
-    public static PowerShell open(String customExecutablePath) throws IOException {
-        return new PowerShell(customExecutablePath);
+    /**
+     * Opens a new PowerShell session with the provided executable.
+     *
+     * @param customExecutable the PowerShell executable. Can be an executable
+     * name like "pwsh" or a path to the executable file.
+     * @return a new PowerShell session.
+     * @throws IOException if an IOException occurred on process creation.
+     */
+    public static PowerShell open(String customExecutable) throws IOException {
+        return new PowerShell(customExecutable);
     }
 
     /**
