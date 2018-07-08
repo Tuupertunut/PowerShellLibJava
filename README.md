@@ -89,6 +89,7 @@ this : The term 'this' is not recognized as the name of a cmdlet, function, scri
 
 ## Changelog
 
-##### 1.1.0
-Added support for PowerShell Core on all platforms.
-Added support for custom PowerShell executables.
+#### 1.1.0
+
+- Added support for PowerShell Core on all platforms.
+- Added support for custom PowerShell executables.
