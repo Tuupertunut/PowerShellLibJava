@@ -4,7 +4,9 @@ A simple library for using PowerShell from Java.
 
 ## Usage
 
-`PowerShell.open()` opens a new PowerShell session. You can execute a PowerShell command with `psSession.executeCommands(command)`. It will return the output of the command as a string:
+`PowerShell.open()` opens a new PowerShell session with default executable. On Windows it is `powershell`, and on other platforms it is `pwsh` from PowerShell Core. You can also specify a custom PowerShell executable, for example `PowerShell.open("/usr/bin/pwsh-preview")`.
+
+You can execute a PowerShell command with `psSession.executeCommands(command)`. It will return the output of the command as a string:
 ```java
 try (PowerShell psSession = PowerShell.open()) {
     System.out.println(psSession.executeCommands("Write-Output 'hello Java'"));
@@ -71,9 +73,9 @@ this : The term 'this' is not recognized as the name of a cmdlet, function, scri
 
 ## Requirements
 
-You must have PowerShell installed on your machine.
+**OS:** Works on every platform that has PowerShell available.
 
-**OS:** Windows is the only currently supported OS. This library has not been tested on Linux, but it might work.
+**PowerShell:** On Windows 7 and newer, Windows PowerShell is installed by default and this library should work with it out of the box. On other platforms, you need to have PowerShell Core (https://github.com/PowerShell/PowerShell) installed.
 
 **Java:** Java 8 or higher is required.
 
