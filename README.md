@@ -86,3 +86,9 @@ this : The term 'this' is not recognized as the name of a cmdlet, function, scri
 **groupId:** com.github.tuupertunut
 
 **artifactId:** powershell-lib-java
+
+## Changelog
+
+##### 1.1.0
+Added support for PowerShell Core on all platforms.
+Added support for custom PowerShell executables.
