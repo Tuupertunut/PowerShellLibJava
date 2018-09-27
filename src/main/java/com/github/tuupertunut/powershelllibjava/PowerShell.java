@@ -155,6 +155,7 @@ public class PowerShell implements Closeable {
     public void close() {
         closed = true;
         if (commandInput != null) {
+            commandInput.println("exit");
             commandInput.close();
         }
         if (executor != null) {
