@@ -73,10 +73,10 @@ public class PowerShell implements Closeable {
 
         outputRecorder = new AsyncReaderRecorder(commandOutput);
         errorOutputRecorder = new AsyncReaderRecorder(commandErrorOutput);
-        executor = Executors.newFixedThreadPool(2, r -> {
-            Thread result = Executors.defaultThreadFactory().newThread(r);
-            result.setDaemon(true);
-            return result;
+        executor = Executors.newFixedThreadPool(2, (Runnable r) -> {
+            Thread thread = Executors.defaultThreadFactory().newThread(r);
+            thread.setDaemon(true);
+            return thread;
         });
         executor.execute(outputRecorder);
         executor.execute(errorOutputRecorder);
