@@ -155,7 +155,10 @@ public class PowerShell implements Closeable {
     public void close() {
         closed = true;
         if (commandInput != null) {
+
+            /* Sending a shutdown signal to PowerShell. */
             commandInput.println("exit");
+
             commandInput.close();
         }
         if (executor != null) {
@@ -172,9 +175,6 @@ public class PowerShell implements Closeable {
                 commandOutput.close();
             } catch (IOException ex) {
             }
-        }
-        if (psSession != null) {
-            psSession.destroy();
         }
     }
 
