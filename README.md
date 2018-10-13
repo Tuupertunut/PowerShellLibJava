@@ -93,3 +93,9 @@ this : The term 'this' is not recognized as the name of a cmdlet, function, scri
 
 - Added support for PowerShell Core on all platforms.
 - Added support for custom PowerShell executables.
+
+#### 1.1.1
+
+- Fixed open PowerShell session blocking program exit.
+- Fixed PowerShell process not terminating on `close()` on some platforms.
+- Improved error messages when PowerShell process is terminated before it should.
