@@ -213,6 +213,9 @@ public class PowerShell implements Closeable {
     public String executeCommands(String... commands) throws PowerShellExecutionException, IOException {
         if (closed) {
             throw new IllegalStateException("This PowerShell session has been closed.");
+        } else if (!psSession.isAlive()) {
+            close();
+            throw new IllegalStateException("The PowerShell process has terminated before it should.");
         }
 
         StringBuilder commandChainBuilder = new StringBuilder();
@@ -244,7 +247,8 @@ public class PowerShell implements Closeable {
              * circumstances. */
             Optional<String> optionalOutput = outputRecorder.consumeToNextDelimiter(END_OF_COMMAND + System.lineSeparator());
             if (!optionalOutput.isPresent()) {
-                throw new RuntimeException("PowerShell output stream ended too early.");
+                close();
+                throw new IllegalStateException("PowerShell output stream ended too early.");
             }
             String output = optionalOutput.get().replace(END_OF_COMMAND + System.lineSeparator(), "");
 
