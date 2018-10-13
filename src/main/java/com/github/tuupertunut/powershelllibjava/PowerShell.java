@@ -206,9 +206,9 @@ public class PowerShell implements Closeable {
      * @throws IOException if an IOException occurred while reading the output
      * of the commands.
      * @throws IllegalStateException if this PowerShell session was already
-     * closed.
-     * @throws RuntimeException if the output stream ended too early, or if the
-     * current thread was interrupted while executing.
+     * closed, or the process or its output stream has terminated too early.
+     * @throws RuntimeException if the current thread was interrupted while
+     * executing.
      */
     public String executeCommands(String... commands) throws PowerShellExecutionException, IOException {
         if (closed) {
