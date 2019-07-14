@@ -33,14 +33,14 @@ import org.junit.Test;
  */
 public class PowerShellTest {
 
-    @Test
+    @Test(timeout = 7000)
     public void testHelloJava() throws IOException, PowerShellExecutionException {
         try (PowerShell psSession = PowerShell.open()) {
             Assert.assertEquals("hello Java" + System.lineSeparator(), psSession.executeCommands("Write-Output 'hello Java'"));
         }
     }
 
-    @Test
+    @Test(timeout = 7000)
     public void testMultiline() throws IOException, PowerShellExecutionException {
         try (PowerShell psSession = PowerShell.open()) {
             Assert.assertEquals(
@@ -56,7 +56,7 @@ public class PowerShellTest {
         }
     }
 
-    @Test
+    @Test(timeout = 7000)
     public void testRememberSession() throws IOException, PowerShellExecutionException {
         try (PowerShell psSession = PowerShell.open()) {
             psSession.executeCommands("$s = 'abc'");
@@ -64,7 +64,7 @@ public class PowerShellTest {
         }
     }
 
-    @Test
+    @Test(timeout = 7000)
     public void testEscape() throws IOException, PowerShellExecutionException {
         String param = "thi's won't bre;ak' the' code";
 
@@ -73,10 +73,28 @@ public class PowerShellTest {
         }
     }
 
-    @Test
-    public void testException() throws IOException {
+    @Test(timeout = 7000)
+    public void testExceptionOnInvalidCommand() throws IOException {
         try (PowerShell psSession = PowerShell.open()) {
             psSession.executeCommands("this is not a valid command");
+            Assert.fail();
+        } catch (PowerShellExecutionException ex) {
+        }
+    }
+
+    @Test(timeout = 7000)
+    public void testExceptionOnThrow() throws IOException {
+        try (PowerShell psSession = PowerShell.open()) {
+            psSession.executeCommands("throw 'error message'");
+            Assert.fail();
+        } catch (PowerShellExecutionException ex) {
+        }
+    }
+
+    @Test(timeout = 7000)
+    public void testExceptionOnUnclosedString() throws IOException {
+        try (PowerShell psSession = PowerShell.open()) {
+            psSession.executeCommands("Write-Output 'unclosed");
             Assert.fail();
         } catch (PowerShellExecutionException ex) {
         }

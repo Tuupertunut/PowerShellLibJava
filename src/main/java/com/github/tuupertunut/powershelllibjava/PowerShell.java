@@ -225,7 +225,9 @@ public class PowerShell implements Closeable {
         }
         String commandChain = commandChainBuilder.toString();
 
-        /* Wrapping the command chain in an "Invoke-Expression" statement in
+        /* Wrapping the command chain in try-catch to catch any errors.
+         *
+         * Wrapping the command chain in an "Invoke-Expression" statement in
          * order to sanitize the user input. Otherwise it would be possible to
          * input partial code and leave the PowerShell session in an invalid
          * state where it cannot accept another command. An example would be
@@ -234,7 +236,7 @@ public class PowerShell implements Closeable {
          * Also ending the command chain with a command to print the end of
          * command string. This way the end of command can be detected in the
          * output. */
-        String wrappedCommandChain = "Invoke-Expression " + escapePowerShellString(commandChain) + ";" + escapePowerShellString(END_OF_COMMAND);
+        String wrappedCommandChain = "try{Invoke-Expression " + escapePowerShellString(commandChain) + "}catch{Write-Error $_};" + escapePowerShellString(END_OF_COMMAND);
 
         commandInput.println(wrappedCommandChain);
 
