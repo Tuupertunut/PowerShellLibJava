@@ -1,0 +1,24 @@
+os: linux
+dist: xenial
+sudo: false
+addons:
+  apt:
+    sources:
+      - sourceline: "deb [arch=amd64] https://packages.microsoft.com/ubuntu/16.04/prod xenial main"
+        key_url: "https://packages.microsoft.com/keys/microsoft.asc"
+    packages:
+      - powershell
+
+language: java
+jdk:
+  - openjdk8
+  - openjdk11
+  - openjdk-ea
+
+matrix:
+  allow_failures:
+    - jdk: openjdk-ea
+
+cache:
+  directories:
+    - $HOME/.m2
