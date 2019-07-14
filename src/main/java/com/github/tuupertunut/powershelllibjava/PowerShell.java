@@ -106,8 +106,12 @@ public class PowerShell implements Closeable {
              * command.
              *
              * -Command - : Read commands from standard input stream of the
-             * process. */
-            return new ProcessBuilder("cmd", "/c", "chcp", "65001", ">", "NUL", "&", psExecutable, "-ExecutionPolicy", "Bypass", "-NoExit", "-Command", "-");
+             * process.
+             *
+             * NOTE: "chcp 65001 > NUL" must be a single string, because on some
+             * platforms the security manager causes ">" to be escaped. See
+             * https://github.com/Tuupertunut/PowerShellLibJava/issues/8 */
+            return new ProcessBuilder("cmd", "/c", "chcp 65001 > NUL", "&", psExecutable, "-ExecutionPolicy", "Bypass", "-NoExit", "-Command", "-");
         } else {
             return new ProcessBuilder(psExecutable, "-ExecutionPolicy", "Bypass", "-NoExit", "-Command", "-");
         }
