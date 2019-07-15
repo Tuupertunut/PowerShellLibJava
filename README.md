@@ -99,3 +99,13 @@ this : The term 'this' is not recognized as the name of a cmdlet, function, scri
 - Fixed open PowerShell session blocking program exit.
 - Fixed PowerShell process not terminating on `close()` on some platforms.
 - Improved error messages when PowerShell process is terminated before it should.
+
+#### 2.0.0
+
+- Added module name for the library.
+- Fixed deadlock when a script threw an exception using throw.
+- Fixed error on startup when security manager is present.
+
+##### Breaking changes
+
+- Error messages coming from PowerShell now look a bit different.
